@@ -22,7 +22,8 @@ var movieSchema = new Schema({
     {
       type: String
     }
-  ]
+  ],
+  url: String
 });
 
 module.exports = mongoose.model("movies", movieSchema);
