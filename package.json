@@ -1,0 +1,23 @@
+{
+  "name": "nodeservice",
+  "version": "1.0.0",
+  "description": "Webservice with NodeJS and VUE",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crunchypack/NodeService.git"
+  },
+  "author": "Simon Lobo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crunchypack/NodeService/issues"
+  },
+  "homepage": "https://github.com/crunchypack/NodeService#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0"
+  }
+}
