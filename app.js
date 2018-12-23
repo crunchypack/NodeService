@@ -2,7 +2,8 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const jToken = require("jsonwebtoken");
 const mongoose = require("mongoose");
-
+const cors = require("cors");
+const session = require("express-session");
 // Instance of express
 const app = express();
 
@@ -11,7 +12,17 @@ mongoose.connect(
   "mongodb://dbuser1:wUMR5VpjSKXia2V@ds147044.mlab.com:47044/mydb",
   { useNewUrlParser: true }
 );
+// Use sessions
 
+app.use(
+  session({
+    secret: "someguy",
+    resave: false,
+    saveUninitialized: true
+  })
+);
+// Allow Cross-origin resourse
+app.use(cors());
 // Read in Schemas
 var Movies = require("./app/models/movies.js");
 var Admin = require("./app/models/admin.js");
@@ -33,50 +44,56 @@ app.get("/api", (req, res) => {
     });
 });
 // Create Admin user
-// this is commented since I only want one user, and wont implement admin creator interface
-app.post("/api/create", (req, res) => {
-  var adminData = {
-    email: req.body.email,
-    password: req.body.pass
-  };
+// This is commented since I only want one user, and wont implement admin creator interface
+// app.post("/api/create", (req, res) => {
+//   var adminData = {
+//     email: req.body.email,
+//     password: req.body.pass
+//   };
 
-  Admin.create(adminData, (err, user) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json({
-      user
-    });
-  });
-});
+//   Admin.create(adminData, (err, user) => {
+//     if (err) {
+//       res.send(err);
+//     }
+//     res.json({
+//       user
+//     });
+//   });
+// });
 // login user
 app.post("/api/login", (req, res, next) => {
+  console.log("request recieved");
   Admin.authenticate(req.body.mail, req.body.pass, (error, user) => {
+    console.log("Authenticating");
     if (error || !user) {
+      console.log("error");
       var err = new Error("Wrong email or password.");
       err.status = 401;
       return next(err);
     } else {
-      res.json({ message: "signed in!", user });
-      //   jToken.sign(
-      //     { user },
-      //     "thisisword",
-      //     { expiresIn: "900s" },
-      //     (err, token) => {
-      //       sessionStorage.setItem("token", token);
-      //       res.json({ message: "logged in" });
-      //     }
-      //   );
+      console.log("no error");
+      jToken.sign(
+        { user },
+        "thisisword",
+        { expiresIn: "900s" },
+        (err, token) => {
+          if (err) console.log(err);
+          console.log("create token");
+          req.session.token = token;
+          res.json({ token });
+        }
+      );
     }
   });
 });
 // Add movies to database
-app.post("/api", verifyToken, (req, res) => {
+app.post("/api", (req, res) => {
   //Verify logged in admin
-  jwt.verify(req.token, "thisisword", (err, auth) => {
+  jToken.verify(req.session.token, "thisisword", (err, auth) => {
     if (err) res.sendStatus(403);
     // Forbidden
     else {
+      console.log("success");
       // instance of movie
       var movie = new Movies();
       // create the new object
@@ -98,21 +115,7 @@ app.post("/api", verifyToken, (req, res) => {
     }
   });
 });
-// Veriy admin user is logged in
-// Authorization format is: auth <token>
-function verifyToken(req, res, next) {
-  // Get the header auth request
-  const authHead = req.headers["authorization"];
-  // Check that it's definec
-  if (typeof authHead !== "undefined") {
-    // slit header in array[1](two fields)
-    const auth = authHead.split(" ");
-    // get the token
-    const authToken = auth[1];
-    // save it to req
-    req.token = authToken;
-    next();
-  } else res.sendStatus(403); // Forbidden
-}
-
-app.listen(3201, () => console.log("Server started on port 3210"));
+app.set("port", 8081);
+app.listen(app.get("port"), () =>
+  console.log("Server started on port " + app.get("port"))
+);
