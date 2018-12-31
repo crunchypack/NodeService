@@ -4,7 +4,7 @@ const bodyparser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require("connect-mongo")(session);
 // Instance of express
 const app = express();
 
@@ -33,11 +33,13 @@ app.use(
   })
 );
 // Allow Cross-origin resourse
-app.use(cors({
-	origin:'http://localhost:8080',
-	methods:'GET,POST,DELETE,PUT',
-	credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    methods: "GET,POST,DELETE,PUT",
+    credentials: true
+  })
+);
 // Read in Schemas
 var Movies = require("./app/models/movies.js");
 var Admin = require("./app/models/admin.js");
@@ -67,6 +69,7 @@ app.get("/api/movie/:id", (req, res) => {
 });
 // Create Admin user
 // This is commented since I only want one user, and wont implement admin creator interface
+/*
 app.post("/api/create", (req, res) => {
   var adminData = {
     email: req.body.email,
@@ -83,6 +86,7 @@ app.post("/api/create", (req, res) => {
     }
   });
 });
+*/
 // login user
 app.post("/api/login", (req, res, next) => {
   console.log("request recieved");
@@ -101,18 +105,18 @@ app.post("/api/login", (req, res, next) => {
   });
 });
 //check if user is logged in
-app.get('/api/logged',(req,res,next)=>{
-  Admin.findById(req.session.userID).exec(function(err,user){
-    if(err){
-      res.json({status:"error"});
-    }else{
-      if(user === null){
-        res.json({status:"false"});
-      }else {
-        res.json({status:"true"});
+app.get("/api/logged", (req, res, next) => {
+  Admin.findById(req.session.userID).exec(function(err, user) {
+    if (err) {
+      res.json({ status: "error" });
+    } else {
+      if (user === null) {
+        res.json({ status: "false" });
+      } else {
+        res.json({ status: "true" });
       }
     }
-  })
+  });
 });
 // Add movies to database
 app.post("/api", (req, res, next) => {
@@ -140,17 +144,18 @@ app.post("/api", (req, res, next) => {
         movie.available = req.body.available;
         movie.url = req.body.url;
         movie.save(err => {
-          if (err){ res.send(err);}
-	  else{
-           res.json({
-            message:
-              "movie " +
-              movie.title +
-              " added by " +
-              user.email +
-              " to database"
-          });
-	  }
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({
+              message:
+                "movie " +
+                movie.title +
+                " added by " +
+                user.email +
+                " to database"
+            });
+          }
         });
       }
     }
@@ -216,7 +221,7 @@ app.get("/api/logout", (req, res, next) => {
     // Delete session
     req.session.destroy(function(err) {
       if (err) {
-	res.json({message:"error"});
+        res.json({ message: "error" });
         return next(err);
       } else {
         return res.json({ message: "logged out" });
@@ -224,8 +229,8 @@ app.get("/api/logout", (req, res, next) => {
     });
   }
 });
+// Set port and start server
 app.set("port", 8081);
 app.listen(app.get("port"), () =>
   console.log("Server started on port " + app.get("port"))
 );
-
