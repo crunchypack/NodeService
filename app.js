@@ -178,11 +178,12 @@ app.put("/api/update/:id", (req, res) => {
           {
             title: req.body.title,
             year: req.body.year,
-            lenght: req.body.lenght,
+            length: req.body.length,
             desc: req.body.desc,
             director: req.body.director,
             genre: req.body.genre,
             starring: req.body.starring,
+            available = req.body.available,
             url: req.body.url
           },
           { new: true },
