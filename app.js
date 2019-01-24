@@ -67,6 +67,25 @@ app.get("/api/movie/:id", (req, res) => {
     res.json(movie);
   });
 });
+// Get movies by service
+app.get("/api/movies/:service/:sort",(req,res)=>{
+  Movies.find({available:[req.params.service]}).sort({year:req.params.sort}).ex$
+    if(err){
+      res.send(err);
+    }
+    res.json(movies);
+  });
+//Get movies with two services
+app.get("/api/movies/:serviceone/:servicetwo/:sort",(req,res)=>{
+  Movies.find({available:{$in:[req.params.serviceone,req.params.servicetwo]}})
+  .sort({year:req.body.sort}).exec((err,movies)=>{
+    if(err){
+      res.send(err);
+    }
+    res.json(movies);
+  })
+});
+
 // Create Admin user
 // This is commented since I only want one user, and wont implement admin creator interface
 /*
