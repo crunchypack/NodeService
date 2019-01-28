@@ -68,17 +68,27 @@ app.get("/api/movie/:id", (req, res) => {
   });
 });
 // Get movies by service
-app.get("/api/movies/:service/:sort",(req,res)=>{
-  Movies.find({available:[req.params.service]}).sort({year:req.params.sort}).ex$
+app.get("/api/movies/:service/:sortby/:desc",(req,res)=>{
+  var sortby = req.params.sortby;
+  var sort = req.params.desc;
+  var query ={};
+  query[sortby] = sort;
+  Movies.find({available:[req.params.service]})
+  .sort(query).exec((err,movies)=>{
     if(err){
       res.send(err);
     }
     res.json(movies);
-  });
+  })
+});
 //Get movies with two services
-app.get("/api/movies/:serviceone/:servicetwo/:sort",(req,res)=>{
+app.get("/api/movies/:serviceone/:servicetwo/:sortby/:desc",(req,res)=>{
+  var sortby = req.params.sortby;
+  var sort = req.params.desc;
+  var query ={};
+  query[sortby] = sort;
   Movies.find({available:{$in:[req.params.serviceone,req.params.servicetwo]}})
-  .sort({year:req.body.sort}).exec((err,movies)=>{
+  .sort(query).exec((err,movies)=>{
     if(err){
       res.send(err);
     }
