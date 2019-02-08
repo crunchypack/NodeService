@@ -50,9 +50,13 @@ mongoose.set("useFindAndModify", false);
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 // Get all movies
-app.get("/api", (req, res) => {
+app.get("/api/:sortby/:desc", (req, res) => {
+  var sortby = req.params.sortby;
+  var sort = req.params.desc;
+  var query ={};
+  query[sortby] = sort;
   Movies.find({})
-    .sort({ year: -1 })
+    .sort(query)
     .exec((err, Movies) => {
       if (err) {
         res.send(err);
@@ -67,6 +71,7 @@ app.get("/api/movie/:id", (req, res) => {
     res.json(movie);
   });
 });
+
 // Get movies by service
 app.get("/api/movies/:service/:sortby/:desc",(req,res)=>{
   var sortby = req.params.sortby;
