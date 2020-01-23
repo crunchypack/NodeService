@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
+
+
 // Instance of express
 const app = express();
 
@@ -33,6 +35,7 @@ app.use(
   })
 );
 // Allow Cross-origin resourse
+
 app.use(cors({
 	origin:'*',
 	methods:'GET,POST,DELETE,PUT',
@@ -48,6 +51,7 @@ mongoose.set("useFindAndModify", false);
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 // Get all movies
+
 app.get("/api/:sortby/:desc", (req, res) => {
   var sortby = req.params.sortby;
   var sort = req.params.desc;
@@ -69,6 +73,7 @@ app.get("/api/movie/one/:id", (req, res) => {
     res.json(movie);
   });
 });
+
 // Get movies by service
 app.get("/api/movies/:service/:sortby/:desc",(req,res)=>{
   var sortby = req.params.sortby;
@@ -99,6 +104,7 @@ app.get("/api/movies/:serviceone/:servicetwo/:sortby/:desc",(req,res)=>{
 });
 // Create Admin user
 // This is commented since I only want one user, and wont implement admin creator interface
+/*
 app.post("/api/create", (req, res) => {
   var adminData = {
     email: req.body.email,
@@ -115,6 +121,7 @@ app.post("/api/create", (req, res) => {
     }
   });
 });
+*/
 // login user
 app.post("/api/login", (req, res, next) => {
   console.log("request recieved");
@@ -223,6 +230,7 @@ app.put("/api/update/:id", (req, res) => {
     }
   });
 });
+
 // Delete movie from database
 app.delete("/api/delete/:id", (req, res, next) => {
   Admin.findById(req.session.userID).exec(function(error, user) {
@@ -249,6 +257,7 @@ app.get("/api/logout", (req, res, next) => {
     // Delete session
     req.session.destroy(function(err) {
       if (err) {
+
 	res.json({message:"error"});
         return next(err);
       } else {
@@ -257,6 +266,7 @@ app.get("/api/logout", (req, res, next) => {
     });
   }
 });
+
 app.set("port", 8081);
 app.listen(app.get("port"), () =>
   console.log("Server started on port " + app.get("port"))
