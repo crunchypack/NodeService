@@ -1,6 +1,6 @@
 
 # NodeService
-Webservice with NodeJS and VUE
+Webservice with NodeJS
 # NodeService
 Webbtjänst som använder Node.js och express för att lagra filmer i en databas.
 ## Paket
